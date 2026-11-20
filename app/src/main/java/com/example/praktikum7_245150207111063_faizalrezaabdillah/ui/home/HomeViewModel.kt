@@ -3,6 +3,7 @@ package com.example.praktikum7_245150207111063_faizalrezaabdillah.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.praktikum7_245150207111063_faizalrezaabdillah.data.preferences.UserPreferencesRepository
 import com.example.praktikum_6_245150207111063_faizalrezaabdillah.data.repository.StudentRepository
 import com.example.praktikum_6_245150207111063_faizalrezaabdillah.ui.home.HomeUiState
 import kotlinx.coroutines.CancellationException
@@ -13,10 +14,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
+@OptIn(FlowPreview::class)
 class HomeViewModel(
-    private val repository: StudentRepository
+    private val repository: StudentRepository,
+    private val preferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
@@ -25,7 +29,18 @@ class HomeViewModel(
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
     init {
+        viewModelScope.launch {
+            _searchQuery.value = preferencesRepository.lastSearchQuery.first()
+        }
         observeSearch()
+        viewModelScope.launch {
+            searchQuery
+                .debounce(500)
+                .distinctUntilChanged()
+                .collectLatest { value ->
+                    preferencesRepository.saveLastSearchQuery(value)
+                }
+        }
     }
 
     fun onSearchQueryChange(query: String) {
@@ -93,10 +108,11 @@ class HomeViewModel(
 }
 
 class HomeViewModelFactory(
-    private val repository: StudentRepository
+    private val repository: StudentRepository,
+    private val preferencesRepository: UserPreferencesRepository
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return HomeViewModel(repository) as T
+        return HomeViewModel(repository, preferencesRepository) as T
     }
 }

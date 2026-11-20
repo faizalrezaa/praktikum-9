@@ -1,13 +1,12 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "com.example.praktikum7_245150207111063_faizalrezaabdillah"
-    compileSdk {
-        version = release(37)
-    }
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.example.praktikum5_245150207111063_faizalrezaabdillah"
@@ -36,6 +35,11 @@ android {
 }
 
 dependencies {
+    implementation("androidx.datastore:datastore-preferences:1.3.0")
+    implementation("androidx.room:room-runtime:2.8.5")
+    implementation("androidx.room:room-ktx:2.8.5")
+    ksp("androidx.room:room-compiler:2.8.5")
+
     implementation("androidx.navigation:navigation-compose:2.9.8")
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)

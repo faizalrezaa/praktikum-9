@@ -28,6 +28,7 @@ fun HomeScreen(
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
     onStudentClick: (Int) -> Unit,
+    onFavoritesClick: () -> Unit,
     onRetry: () -> Unit,
     onRefresh: () -> Unit
 ) {
@@ -51,6 +52,11 @@ fun HomeScreen(
                 onClick = onRefresh
             ) {
                 Text("Refresh")
+            }
+            Button(
+                onClick = onFavoritesClick
+            ) {
+                Text("Favorit")
             }
         }
 

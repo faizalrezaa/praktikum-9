@@ -1,4 +1,3 @@
-
 package com.example.praktikum_6_245150207111063_faizalrezaabdillah.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
@@ -15,10 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.praktikum7_245150207111063_faizalrezaabdillah.ui.detail.DetailUiState
 
-
 @Composable
 fun DetailScreen(
     uiState: DetailUiState,
+    onToggleFavorite: () -> Unit,
     onBack: () -> Unit
 ) {
     Column(
@@ -55,7 +54,6 @@ fun DetailScreen(
                 }
             }
 
-
             uiState.student != null -> {
                 val student = uiState.student
 
@@ -63,6 +61,15 @@ fun DetailScreen(
                     Text(data.name, style = MaterialTheme.typography.headlineSmall)
                     Text("Email: ${data.email}")
                     Text("University: ${data.university}")
+                }
+
+                Button(onClick = onToggleFavorite) {
+                    Text(
+                        if (uiState.isFavorite)
+                            "Hapus dari Favorit"
+                        else
+                            "Simpan ke Favorit"
+                    )
                 }
 
                 Button(onClick = onBack) {
